@@ -2,11 +2,13 @@ const express = require("express");
 const cors = require("cors");
 const { ObjectId } = require("mongodb");
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion } = require("mongodb");
 const app = express();
 const port = process.env.PORT || 5000;
 
-const uri = process.env.MONGO_URI || "mongodb+srv://task-admin:BtoqN6rLi8e7DWPt@task-manager.u5awn.mongodb.net/?retryWrites=true&w=majority&appName=Task-Manager"; // Mongo URI
+const uri =
+  process.env.MONGO_URI ||
+  "mongodb+srv://task-admin:BtoqN6rLi8e7DWPt@task-manager.u5awn.mongodb.net/?retryWrites=true&w=majority&appName=Task-Manager"; // Mongo URI
 
 const client = new MongoClient(uri, {
   serverApi: {
@@ -54,11 +56,21 @@ app.post("/users", async (req, res) => {
     const result = await db.collection("users").insertOne({
       displayName,
       email,
-      photoURL
+      photoURL,
     });
     res.send(result);
   } catch (error) {
     console.error("Error creating user:", error);
-  ;
+  }
+});
+
+// Check if user already exists
+app.get("/users/:email", async (req, res) => {
+  const { email } = req.params;
+  try {
+    const user = await db.collection("users").findOne({ email });
+    res.send(user);
+  } catch (error) {
+    return res.status(500).json({ message: "Error checking user" });
   }
 });
