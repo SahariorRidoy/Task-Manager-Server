@@ -52,25 +52,49 @@ app.get("/", (req, res) => {
 // Create a new task
 app.post("/users", async (req, res) => {
   const { displayName, email, photoURL } = req.body;
-  try {
     const result = await db.collection("users").insertOne({
       displayName,
       email,
       photoURL,
     });
     res.send(result);
-  } catch (error) {
-    console.error("Error creating user:", error);
-  }
 });
 
 // Check if user already exists
 app.get("/users/:email", async (req, res) => {
   const { email } = req.params;
-  try {
     const user = await db.collection("users").findOne({ email });
     res.send(user);
-  } catch (error) {
-    return res.status(500).json({ message: "Error checking user" });
-  }
+  
 });
+
+
+// Post a new task
+app.post("/tasks", async (req, res) => {
+  const { title, description, timestamp,category } = req.body;
+    const result = await db.collection("tasks").insertOne({
+      title,
+      description,
+      timestamp,
+      category
+    });
+    res.send(result);
+});
+
+// Get all tasks
+app.get("/tasks", async (req, res) => {
+    const tasks = await db.collection("tasks").find().toArray();
+    res.send(tasks);
+});
+
+
+// Delete a task
+app.delete("/tasks/:id", async (req, res) => {
+    const { id } = req.params;
+    const result = await db.collection("tasks").deleteOne({ _id: new ObjectId(id) });
+    if (result.deletedCount === 1) {
+      res.send(result);
+    } 
+
+});
+
