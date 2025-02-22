@@ -98,3 +98,15 @@ app.delete("/tasks/:id", async (req, res) => {
 
 });
 
+
+// Update a task
+app.put("/tasks/:id", async (req, res) => {
+    const { id } = req.params;
+    const { title, description, category } = req.body;
+    const result = await db.collection("tasks").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: { title, description, category } }
+    );
+    res.json({ message: "Task updated successfully", result });
+});
+
